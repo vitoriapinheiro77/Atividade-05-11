@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  
+  app:
+    build:
+      context: ./php
+    container_name: php_app
+    ports:
+      - "80:80"  
+    volumes:
+      - ./php:/var/www/html/ 
+    depends_on:
+      - db 
+    networks:
+      - app-network
+
+  
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: user_data_db
+      MYSQL_USER: user_app
+      MYSQL_PASSWORD: user_password
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d 
+      - db-data:/var/lib/mysql 
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
+
+
+volumes:
+  db-data:
